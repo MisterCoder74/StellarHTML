@@ -28,6 +28,7 @@ Partial Class about
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
+        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -56,9 +57,9 @@ Partial Class about
         Me.Label2.AutoSize = True
         Me.Label2.Location = New System.Drawing.Point(120, 41)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(92, 13)
+        Me.Label2.Size = New System.Drawing.Size(119, 13)
         Me.Label2.TabIndex = 2
-        Me.Label2.Text = "v. 1.0 - Aug. 2021"
+        Me.Label2.Text = "v. 1.4 - November 2021"
         '
         'Label3
         '
@@ -67,22 +68,33 @@ Partial Class about
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(204, 13)
         Me.Label3.TabIndex = 3
-        Me.Label3.Text = "Version 1.0.0000.00 (Official Build) (64 bit)"
+        Me.Label3.Text = "Version 1.4.0000.00 (Official Build) (64 bit)"
         '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(120, 96)
+        Me.Label4.Location = New System.Drawing.Point(120, 76)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(188, 13)
         Me.Label4.TabIndex = 4
         Me.Label4.Text = "A. Demontis - ademontis@hotmail.com"
         '
+        'LinkLabel1
+        '
+        Me.LinkLabel1.AutoSize = True
+        Me.LinkLabel1.Location = New System.Drawing.Point(120, 95)
+        Me.LinkLabel1.Name = "LinkLabel1"
+        Me.LinkLabel1.Size = New System.Drawing.Size(275, 13)
+        Me.LinkLabel1.TabIndex = 5
+        Me.LinkLabel1.TabStop = True
+        Me.LinkLabel1.Text = "https://ademontis.wixsite.com/vbnetprojects/stellareditor"
+        '
         'about
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(375, 136)
+        Me.ClientSize = New System.Drawing.Size(401, 136)
+        Me.Controls.Add(Me.LinkLabel1)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
@@ -105,4 +117,5 @@ Partial Class about
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents LinkLabel1 As System.Windows.Forms.LinkLabel
 End Class

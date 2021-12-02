@@ -39,6 +39,8 @@ Partial Class tableadd
         Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
+        Me.TextBox5 = New System.Windows.Forms.TextBox()
+        Me.Label8 = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -141,6 +143,8 @@ Partial Class tableadd
         '
         'GroupBox2
         '
+        Me.GroupBox2.Controls.Add(Me.TextBox5)
+        Me.GroupBox2.Controls.Add(Me.Label8)
         Me.GroupBox2.Controls.Add(Me.ComboBox3)
         Me.GroupBox2.Controls.Add(Me.Label7)
         Me.GroupBox2.Controls.Add(Me.TextBox4)
@@ -160,7 +164,7 @@ Partial Class tableadd
         '
         Me.ComboBox3.FormattingEnabled = True
         Me.ComboBox3.Items.AddRange(New Object() {"left", "center", "right"})
-        Me.ComboBox3.Location = New System.Drawing.Point(99, 130)
+        Me.ComboBox3.Location = New System.Drawing.Point(99, 178)
         Me.ComboBox3.Name = "ComboBox3"
         Me.ComboBox3.Size = New System.Drawing.Size(100, 23)
         Me.ComboBox3.TabIndex = 25
@@ -170,7 +174,7 @@ Partial Class tableadd
         Me.Label7.AutoSize = True
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label7.ForeColor = System.Drawing.Color.Black
-        Me.Label7.Location = New System.Drawing.Point(14, 130)
+        Me.Label7.Location = New System.Drawing.Point(14, 179)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(35, 13)
         Me.Label7.TabIndex = 24
@@ -178,7 +182,7 @@ Partial Class tableadd
         '
         'TextBox4
         '
-        Me.TextBox4.Location = New System.Drawing.Point(99, 81)
+        Me.TextBox4.Location = New System.Drawing.Point(99, 130)
         Me.TextBox4.Name = "TextBox4"
         Me.TextBox4.Size = New System.Drawing.Size(54, 21)
         Me.TextBox4.TabIndex = 23
@@ -188,7 +192,7 @@ Partial Class tableadd
         Me.Label6.AutoSize = True
         Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label6.ForeColor = System.Drawing.Color.Black
-        Me.Label6.Location = New System.Drawing.Point(14, 81)
+        Me.Label6.Location = New System.Drawing.Point(14, 130)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(44, 13)
         Me.Label6.TabIndex = 22
@@ -223,6 +227,24 @@ Partial Class tableadd
         Me.Button1.TabIndex = 22
         Me.Button1.Text = "Add Table"
         Me.Button1.UseVisualStyleBackColor = False
+        '
+        'TextBox5
+        '
+        Me.TextBox5.Location = New System.Drawing.Point(99, 80)
+        Me.TextBox5.Name = "TextBox5"
+        Me.TextBox5.Size = New System.Drawing.Size(54, 21)
+        Me.TextBox5.TabIndex = 27
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label8.ForeColor = System.Drawing.Color.Black
+        Me.Label8.Location = New System.Drawing.Point(14, 80)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(40, 13)
+        Me.Label8.TabIndex = 26
+        Me.Label8.Text = "Width"
         '
         'tableadd
         '
@@ -265,4 +287,6 @@ Partial Class tableadd
     Friend WithEvents TextBox3 As System.Windows.Forms.TextBox
     Friend WithEvents Label5 As System.Windows.Forms.Label
     Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents TextBox5 As System.Windows.Forms.TextBox
+    Friend WithEvents Label8 As System.Windows.Forms.Label
 End Class

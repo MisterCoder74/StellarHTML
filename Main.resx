@@ -162,7 +162,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAB2
-        IAAAAk1TRnQBSQFMAgEBBAEAAZABAQGQAQEBGAEAARgBAAT/AREBAAj/AUIBTQE2BwABNgMAASgDAAFg
+        IAAAAk1TRnQBSQFMAgEBBAEAASABAgEgAQIBGAEAARgBAAT/AREBAAj/AUIBTQE2BwABNgMAASgDAAFg
         AwABMAMAAQEBAAEQBgABJP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/ACgAAf8BfwH/
         AX8BnAFzAVoBawE5AWcBOQFnATkBZwE5AWcBOQFnATkBZwE5AWcBOQFnATkBZwE5AWcBOQFnAVoBawFa
         AWsBvQF3Af8Bfw4AAd4BewE5AWcBOQFnATkBZwE5AWcBOQFnATkBZwE5AWcBOQFnATkBZwE5AWcBOQFn
@@ -306,11 +306,14 @@
   <metadata name="ContextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>458, 17</value>
   </metadata>
+  <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>359, 17</value>
+  </metadata>
   <metadata name="FontDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>615, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>47</value>
+    <value>34</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

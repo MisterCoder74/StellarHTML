@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Option Explicit On
+Imports System.IO
 Imports System.IO.File
 Imports System.Text.RegularExpressions
 Public Class Main
@@ -7,7 +8,14 @@ Public Class Main
     Dim temp As Integer = 0
     Dim lastsearch As String = ""
     Dim workingpath As String = Application.StartupPath
-   
+
+    ' API to reduce RTB flicker when colorizing words
+    Private Declare Function SendMessage Lib "User32.dll" Alias "SendMessageA" (ByVal hwnd As IntPtr, ByVal wMsg As Integer, ByVal wParam As Integer, ByVal lParam As Integer) As Integer
+    Private Const WM_SETREDRAW As Integer = &HB
+    ' flag to recolor all text
+    Private ReColor As Boolean
+    ' holds all words to be colored
+    Private AllWords() As List(Of String)
 
 
     Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles Button1.Click
@@ -16,7 +24,43 @@ Public Class Main
     End Sub
 
     Private Sub ExitToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ExitToolStripMenuItem.Click
-        Me.Close()
+        Dim result As DialogResult = MessageBox.Show("Do you want to save your work?", "Save and close program", MessageBoxButtons.YesNoCancel)
+        If result = DialogResult.Cancel Then
+
+        ElseIf result = DialogResult.No Then
+
+            Me.Close()
+        ElseIf result = DialogResult.Yes Then
+            Try
+                Dim dlg As New SaveFileDialog, fName As String = String.Empty
+
+
+                With dlg
+                    .Title = "Save HTML File"
+                    .Filter = "HTML file (*.html)|*.html|HTML file (*.htm)|*.htm"
+                    .AddExtension = True
+                    .DefaultExt = "html"
+
+                    If .ShowDialog = Windows.Forms.DialogResult.OK Then
+
+                        fName = .FileName
+                        RichTextBox1.SaveFile(fName, RichTextBoxStreamType.PlainText)
+                        ToolStripStatusLabel1.Text = "File saved"
+
+
+
+                        Exit Sub
+                        Me.Close()
+                    End If
+                End With
+
+
+            Catch ex As Exception
+                MsgBox("Save error. Cannot save file.")
+                ToolStripStatusLabel1.Text = "Error saving file."
+            End Try
+
+        End If
     End Sub
 
    
@@ -308,6 +352,8 @@ Public Class Main
 
         ElseIf result = DialogResult.No Then
             RichTextBox1.Clear()
+            TabPage1.Text = "Untitled.html"
+            ToolStripStatusLabel1.Text = "Ready."
         ElseIf result = DialogResult.Yes Then
             Try
                 Dim dlg As New SaveFileDialog, fName As String = String.Empty
@@ -416,19 +462,19 @@ Public Class Main
 
     Private Sub Button21_Click(sender As System.Object, e As System.EventArgs) Handles Button21.Click
         Dim selected = RichTextBox1.SelectedText
-        Dim justified = "<p align=center>" & selected & "</p>"
+        Dim justified = "<center>" & selected & "</center>"
         RichTextBox1.SelectedText = justified
     End Sub
 
     Private Sub Button22_Click(sender As System.Object, e As System.EventArgs) Handles Button22.Click
         Dim selected = RichTextBox1.SelectedText
-        Dim justified = "<p align=left>" & selected & "</p>"
+        Dim justified = "<p align=" & Chr(34) & "left" & Chr(34) & ">" & selected & "</p>"
         RichTextBox1.SelectedText = justified
     End Sub
 
     Private Sub Button20_Click(sender As System.Object, e As System.EventArgs) Handles Button20.Click
         Dim selected = RichTextBox1.SelectedText
-        Dim justified = "<p align=right>" & selected & "</p>"
+        Dim justified = "<p align=" & Chr(34) & "right" & Chr(34) & ">" & selected & "</p>"
         RichTextBox1.SelectedText = justified
     End Sub
 
@@ -474,7 +520,7 @@ Public Class Main
     End Sub
 
     Private Sub Button7_Click(sender As System.Object, e As System.EventArgs) Handles Button7.Click
-        Dim FilePath As String = "resources/metastructure.txt"
+        Dim FilePath As String = "resources/metastructure.tpl"
         RichTextBox1.SelectedText = System.IO.File.ReadAllText(FilePath) & vbCrLf
     End Sub
 
@@ -499,6 +545,7 @@ Public Class Main
         ListBox1.Items.AddRange(lines)
         
     End Sub
+
 
     Private Sub ListBox1_DoubleClick(sender As System.Object, e As System.EventArgs) Handles ListBox1.DoubleClick
         RichTextBox1.SelectedText = ListBox1.SelectedItem.ToString & vbCrLf
@@ -552,14 +599,12 @@ Public Class Main
     End Sub
 
 
-    Private Sub ToLowercaseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ToLowercaseToolStripMenuItem.Click
-        RichTextBox1.SelectedText = LCase(RichTextBox1.SelectedText)
-        ToolStripStatusLabel1.Text = "Text converted to lowercase"
+    Private Sub ToLowercaseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs)
+
     End Sub
 
-    Private Sub ToUppercaseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ToUppercaseToolStripMenuItem.Click
-        RichTextBox1.SelectedText = UCase(RichTextBox1.SelectedText)
-        ToolStripStatusLabel1.Text = "Text converted to uppercase"
+    Private Sub ToUppercaseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs)
+
     End Sub
 
     Private Sub InlineQuoteToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles InlineQuoteToolStripMenuItem.Click
@@ -590,8 +635,8 @@ Public Class Main
         RichTextBox1.SelectedText = "<kbd>" & RichTextBox1.SelectedText & "</kbd>"
     End Sub
 
-    Private Sub ReverseTextToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ReverseTextToolStripMenuItem.Click
-        RichTextBox1.SelectedText = "<bdo  dir=" & Chr(34) & "rtl" & Chr(34) & ">" & RichTextBox1.SelectedText & "</bdo>"
+    Private Sub ReverseTextToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs)
+
     End Sub
 
     Private Sub Button6_Click(sender As System.Object, e As System.EventArgs) Handles Button6.Click
@@ -767,4 +812,457 @@ Public Class Main
    
 
    
+    Private Sub ToolStripComboBox1_Click(sender As System.Object, e As System.EventArgs)
+
+    End Sub
+
+    Private Sub LowercaseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles LowercaseToolStripMenuItem.Click
+        RichTextBox1.SelectedText = LCase(RichTextBox1.SelectedText)
+        ToolStripStatusLabel1.Text = "Text converted to lowercase"
+    End Sub
+
+    Private Sub UppercaseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles UppercaseToolStripMenuItem.Click
+        RichTextBox1.SelectedText = UCase(RichTextBox1.SelectedText)
+        ToolStripStatusLabel1.Text = "Text converted to uppercase"
+    End Sub
+
+
+  
+
+    
+    Private Sub ReberseToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ReberseToolStripMenuItem.Click
+        RichTextBox1.SelectedText = "<bdo  dir=" & Chr(34) & "rtl" & Chr(34) & ">" & RichTextBox1.SelectedText & "</bdo>"
+    End Sub
+
+    Private Sub TAGDefiitinitionToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles TAGDefiitinitionToolStripMenuItem.Click
+        RichTextBox1.SelectedText = "<!-- you can use multiple tags separated with commas -->" & vbCrLf
+        RichTextBox1.SelectedText = "(your tag here) {" & vbCrLf & "}" & vbCrLf
+
+    End Sub
+
+    Private Sub CLASSDefinitionToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles CLASSDefinitionToolStripMenuItem.Click
+        RichTextBox1.SelectedText = ".(your class here) {" & vbCrLf & "}" & vbCrLf
+    End Sub
+
+    Private Sub IDDefinitionToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles IDDefinitionToolStripMenuItem.Click
+        RichTextBox1.SelectedText = "#(your id here) {" & vbCrLf & "}" & vbCrLf
+    End Sub
+
+    Private Sub TYPEDefinitionToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles TYPEDefinitionToolStripMenuItem.Click
+        RichTextBox1.SelectedText = "input[type=(your type here)] {" & vbCrLf & "}" & vbCrLf
+    End Sub
+
+    Private Sub ColorClassesToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ColorClassesToolStripMenuItem.Click
+        bscolorclasses.show()
+
+    End Sub
+
+   
+    Private Sub Main_FormClosing(sender As System.Object, e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
+        Dim result As DialogResult = MessageBox.Show("Do you want to save your work?", "Save and close program", MessageBoxButtons.YesNoCancel)
+        If result = DialogResult.Cancel Then
+
+        ElseIf result = DialogResult.No Then
+            Exit Sub
+            Me.Close()
+        ElseIf result = DialogResult.Yes Then
+            Try
+                Dim dlg As New SaveFileDialog, fName As String = String.Empty
+
+
+                With dlg
+                    .Title = "Save HTML File"
+                    .Filter = "HTML file (*.html)|*.html|HTML file (*.htm)|*.htm"
+                    .AddExtension = True
+                    .DefaultExt = "html"
+
+                    If .ShowDialog = Windows.Forms.DialogResult.OK Then
+
+                        fName = .FileName
+                        RichTextBox1.SaveFile(fName, RichTextBoxStreamType.PlainText)
+                        ToolStripStatusLabel1.Text = "File saved"
+
+
+
+                        Exit Sub
+                        Me.Close()
+                    End If
+                End With
+
+
+            Catch ex As Exception
+                MsgBox("Save error. Cannot save file.")
+                ToolStripStatusLabel1.Text = "Error saving file."
+            End Try
+
+        End If
+    End Sub
+
+    Private Sub HorizontalcolumnsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles HorizontalcolumnsToolStripMenuItem.Click
+        Dim FilePath As String = "resources/frameset columns.tpl"
+        RichTextBox1.SelectedText = System.IO.File.ReadAllText(FilePath)
+
+    End Sub
+
+    Private Sub VerticalrowsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles VerticalrowsToolStripMenuItem.Click
+        Dim FilePath As String = "resources/frameset rows.tpl"
+        RichTextBox1.SelectedText = System.IO.File.ReadAllText(FilePath)
+    End Sub
+
+    Private Sub HorizontalwithHeaderToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles HorizontalwithHeaderToolStripMenuItem.Click
+        Dim FilePath As String = "resources/frameset columns w header.tpl"
+        RichTextBox1.SelectedText = System.IO.File.ReadAllText(FilePath)
+    End Sub
+
+    Private Sub HTML4BouncingTextToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles HTML4BouncingTextToolStripMenuItem.Click
+        Dim FilePath As String = "resources/bouncing text.tpl"
+        RichTextBox1.SelectedText = System.IO.File.ReadAllText(FilePath)
+    End Sub
+
+    Private Sub ViewFullscreenToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ViewFullscreenToolStripMenuItem.Click
+        Me.WindowState = FormWindowState.Maximized
+
+    End Sub
+
+    
+    Private Sub CopyToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles CopyToolStripMenuItem1.Click
+        Try
+            If RichTextBox1.SelectedText <> "" Then
+                Clipboard.SetData(DataFormats.Text, RichTextBox1.SelectedText)
+
+            Else
+                MsgBox("Please select text to copy.", MsgBoxStyle.Information, "Copy")
+            End If
+        Catch ex As Exception
+            MsgBox("Can't copy the selected item to Clipboard.", MsgBoxStyle.Critical, "Copy")
+            ToolStripStatusLabel1.Text = "Can't copy the selected item to Clipboard."
+        End Try
+    End Sub
+
+    Private Sub PasteToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles PasteToolStripMenuItem1.Click
+        Try
+            If Clipboard.ContainsText Then
+
+                RichTextBox1.SelectedText = Clipboard.GetData(DataFormats.Text)
+
+            Else
+                MsgBox("Clipboard does not contai valid elements.", MsgBoxStyle.Information, "Paste")
+            End If
+        Catch ex As Exception
+            MsgBox("Can't paste from Clipboard.", MsgBoxStyle.Critical, "Paste")
+            ToolStripStatusLabel1.Text = "Error pasting from Clipboard."
+        End Try
+    End Sub
+
+    Private Sub CenterToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles CenterToolStripMenuItem1.Click
+        Dim selected = RichTextBox1.SelectedText
+        Dim justified = "<center>" & selected & "</center>"
+        RichTextBox1.SelectedText = justified
+    End Sub
+
+    Private Sub LeftToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles LeftToolStripMenuItem1.Click
+        Dim selected = RichTextBox1.SelectedText
+        Dim justified = "<p align=" & Chr(34) & "left" & Chr(34) & ">" & selected & "</p>"
+        RichTextBox1.SelectedText = justified
+    End Sub
+
+    Private Sub RightToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles RightToolStripMenuItem1.Click
+        Dim selected = RichTextBox1.SelectedText
+        Dim justified = "<p align=" & Chr(34) & "right" & Chr(34) & ">" & selected & "</p>"
+        RichTextBox1.SelectedText = justified
+    End Sub
+
+    Private Sub BoldToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles BoldToolStripMenuItem1.Click
+        Dim selected = RichTextBox1.SelectedText
+        Dim formatted = "<b>" & selected & "</b>"
+        RichTextBox1.SelectedText = formatted
+    End Sub
+
+    Private Sub ItalicToolStripMenuItem1_Click(sender As System.Object, e As System.EventArgs) Handles ItalicToolStripMenuItem1.Click
+        Dim selected = RichTextBox1.SelectedText
+        Dim formatted = "<i>" & selected & "</i>"
+        RichTextBox1.SelectedText = formatted
+    End Sub
+
+    Private Sub UnderlineToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles UnderlineToolStripMenuItem.Click
+        Dim selected = RichTextBox1.SelectedText
+        Dim formatted = "<u>" & selected & "</u>"
+        RichTextBox1.SelectedText = formatted
+    End Sub
+
+    Private Sub FullWebsitesToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles FullWebsitesToolStripMenuItem.Click
+        websites.Show()
+
+    End Sub
+
+    Private Sub Button31_Click(sender As System.Object, e As System.EventArgs) Handles Button31.Click
+        RichTextBox1.SelectedText = "(tag here) {" & vbCrLf & vbCrLf & "}"
+    End Sub
+
+    Private Sub Button32_Click(sender As System.Object, e As System.EventArgs) Handles Button32.Click
+        RichTextBox1.SelectedText = ".(class here) {" & vbCrLf & vbCrLf & "}"
+    End Sub
+
+    Private Sub Button33_Click(sender As System.Object, e As System.EventArgs) Handles Button33.Click
+        RichTextBox1.SelectedText = "#(id here) {" & vbCrLf & vbCrLf & "}"
+    End Sub
+
+    Private Sub Button34_Click(sender As System.Object, e As System.EventArgs) Handles Button34.Click
+        RichTextBox1.SelectedText = ":hover"
+    End Sub
+
+    Private Sub Button35_Click(sender As System.Object, e As System.EventArgs) Handles Button35.Click
+        RichTextBox1.SelectedText = "::before"
+    End Sub
+
+    Private Sub Button36_Click(sender As System.Object, e As System.EventArgs) Handles Button36.Click
+        RichTextBox1.SelectedText = "::after"
+    End Sub
+
+    Private Sub Button37_Click(sender As System.Object, e As System.EventArgs) Handles Button37.Click
+        RichTextBox1.SelectedText = "<input type=" & Chr(34) & "button" & Chr(34) & " value=" & Chr(34) & "(value here)" & Chr(34) & ">"
+    End Sub
+
+    Private Sub Button39_Click(sender As System.Object, e As System.EventArgs) Handles Button39.Click
+        RichTextBox1.SelectedText = "<input type=" & Chr(34) & "checkbox" & Chr(34) & " name=" & Chr(34) & "(name here)" & Chr(34) & ">"
+    End Sub
+
+    Private Sub Button38_Click(sender As System.Object, e As System.EventArgs) Handles Button38.Click
+        RichTextBox1.SelectedText = "<input type=" & Chr(34) & "radio" & Chr(34) & " name=" & Chr(34) & "(name here)" & " value=" & Chr(34) & "(value here)" & Chr(34) & ">"
+    End Sub
+
+    Private Sub Button40_Click(sender As System.Object, e As System.EventArgs) Handles Button40.Click
+        RichTextBox1.SelectedText = "<input type=" & Chr(34) & "text" & Chr(34) & " name=" & Chr(34) & "(name here)" & Chr(34) & ">"
+    End Sub
+
+    Private Sub Button41_Click(sender As System.Object, e As System.EventArgs) Handles Button41.Click
+        RichTextBox1.SelectedText = "<textarea id=" & Chr(34) & "(id here)" & Chr(34) & " name=" & Chr(34) & "(name here)" & Chr(34) & " rows= " & " cols= " & ">" & vbCrLf
+        RichTextBox1.SelectedText = "</textarea>"
+    End Sub
+
+    Private Sub Button42_Click(sender As System.Object, e As System.EventArgs) Handles Button42.Click
+        RichTextBox1.SelectedText = "<label for=" & Chr(34) & "(element id here)" & Chr(34) & ">" & vbCrLf
+        RichTextBox1.SelectedText = "</label>"
+    End Sub
+
+    Private Sub Button30_Click(sender As System.Object, e As System.EventArgs)
+
+    End Sub
+
+    Private Sub DatalistWizardToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles DatalistWizardToolStripMenuItem.Click
+        datalistcreator.Show()
+    End Sub
+
+    Private Sub Button12_Click(sender As System.Object, e As System.EventArgs) Handles Button12.Click
+        RichTextBox1.SelectedText = "<input type=" & Chr(34) & "color" & Chr(34) & " name=" & Chr(34) & "(name here)" & Chr(34) & " value=" & Chr(34) & "(value here)" & Chr(34) & ">"
+    End Sub
+
+    Private Sub Button23_Click(sender As System.Object, e As System.EventArgs) Handles Button23.Click
+        RichTextBox1.SelectedText = "<input type=" & Chr(34) & "date" & Chr(34) & " name=" & Chr(34) & "(name here)" & Chr(34) & " id=" & Chr(34) & "(id here)" & Chr(34) & ">"
+    End Sub
+
+  
+
+    Private Sub RichTextBox1_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles RichTextBox1.KeyDown
+        ' If backspace or delete key then flag to recolor all
+        If e.KeyCode = Keys.Back Or e.KeyCode = Keys.Delete Then
+            ReColor = True
+        End If
+    End Sub
+
+    Private Sub RichTextBox1_TextChanged(sender As System.Object, e As System.EventArgs) Handles RichTextBox1.TextChanged
+
+        ' save Selection Start
+        Dim CurrentSelStart As Integer = RichTextBox1.SelectionStart
+
+        ' lock RTB drawing (no flicker while coloring!)
+        Call SendMessage(RichTextBox1.Handle, WM_SETREDRAW, 0, 0)
+
+        If ReColor = True Then ' reset all - default colors
+            ReColor = False
+            RichTextBox1.SelectionStart = 0
+            RichTextBox1.SelectionLength = RichTextBox1.TextLength
+            RichTextBox1.SelectionColor = RichTextBox1.ForeColor
+            RichTextBox1.SelectionBackColor = RichTextBox1.BackColor
+        End If
+
+        ' color words in RTB
+        RTB_Color(RichTextBox1)
+
+        ' restore SelectionStart/Length
+        RichTextBox1.SelectionLength = 0
+        RichTextBox1.SelectionStart = CurrentSelStart
+        ' restore default colors
+        RichTextBox1.SelectionColor = RichTextBox1.ForeColor
+        RichTextBox1.SelectionBackColor = RichTextBox1.BackColor
+
+        ' unlock/redraw RTB
+        SendMessage(RichTextBox1.Handle, WM_SETREDRAW, 1, 0)
+        RichTextBox1.Invalidate()
+    End Sub
+
+    Private Sub RTB_Color(ByVal rtb As RichTextBox)
+
+        '// Color text in RTB //
+        Dim WordList As New List(Of String)
+        Dim x, start, wrd As Integer
+        Dim textColor As Color
+
+        Dim BlueWords As New List(Of String)
+        BlueWords.Add("Blue")
+        BlueWords.Add("head")
+        BlueWords.Add("/head")
+        BlueWords.Add("html")
+        BlueWords.Add("/html")
+        BlueWords.Add("body")
+        BlueWords.Add("/body")
+        BlueWords.Add("title")
+        BlueWords.Add("/title")
+        BlueWords.Add("section")
+        BlueWords.Add("/section")
+        BlueWords.Add("header")
+        BlueWords.Add("/header")
+        BlueWords.Add("footer")
+        BlueWords.Add("/footer")
+        BlueWords.Add("aside")
+        BlueWords.Add("/aside")
+        BlueWords.Add("summary")
+        BlueWords.Add("/summary")
+        BlueWords.Add("details")
+        BlueWords.Add("/details")
+        BlueWords.Add("style")
+        BlueWords.Add("/style")
+
+        Dim RedWords As New List(Of String)
+        RedWords.Add("Red")
+        RedWords.Add("img src=")
+        RedWords.Add("a href=")
+        RedWords.Add("/a")
+        RedWords.Add("br")
+        RedWords.Add("p")
+        RedWords.Add("/p")
+        RedWords.Add("h1")
+        RedWords.Add("/h1")
+        RedWords.Add("h2")
+        RedWords.Add("/h2")
+        RedWords.Add("h3")
+        RedWords.Add("/h3")
+        RedWords.Add("h4")
+        RedWords.Add("/h4")
+        RedWords.Add("h5")
+        RedWords.Add("/h5")
+        RedWords.Add("h6")
+        RedWords.Add("/h6")
+        RedWords.Add("table")
+        RedWords.Add("/table")
+        RedWords.Add("center")
+        RedWords.Add("/center")
+        RedWords.Add("font")
+        RedWords.Add("/font")
+        RedWords.Add("div")
+        RedWords.Add("/div")
+        RedWords.Add("ol")
+        RedWords.Add("/ol")
+        RedWords.Add("ul")
+        RedWords.Add("/ul")
+        RedWords.Add("li")
+        RedWords.Add("/li")
+        RedWords.Add("form")
+        RedWords.Add("/form")
+        RedWords.Add("input")
+        RedWords.Add("/input")
+        RedWords.Add("td")
+        RedWords.Add("/td")
+        RedWords.Add("th")
+        RedWords.Add("/th")
+        RedWords.Add("tr")
+        RedWords.Add("/tr")
+        RedWords.Add("span")
+        RedWords.Add("/span")
+        RedWords.Add("audio")
+        RedWords.Add("/audio")
+        RedWords.Add("source")
+        RedWords.Add("/source")
+        RedWords.Add("textarea")
+        RedWords.Add("/textarea")
+        RedWords.Add("button")
+        RedWords.Add("/button")
+        RedWords.Add("caption")
+        RedWords.Add("/caption")
+        RedWords.Add("iframe")
+        RedWords.Add("/iframe")
+        RedWords.Add("frameset")
+        RedWords.Add("/frameset")
+        RedWords.Add("frame")
+        RedWords.Add("/frame")
+
+        Dim OliveWords As New List(Of String)
+        OliveWords.Add("<")
+        OliveWords.Add(">")
+        OliveWords.Add("*ad*")
+
+
+        ReDim AllWords(2) ' number of word lists loaded (zero based so 1 = 2 lists!)
+
+        ' copy word lists to array list
+        AllWords(0) = BlueWords
+        AllWords(1) = RedWords
+        AllWords(2) = OliveWords
+
+        ' set word list & color
+        For Each item In BlueWords
+
+            textColor = Color.Blue ' the color for these words
+            ' find and color words ( MatchCase )
+            For x = 1 To item.Count - 1 ' start at 1! , 0 = the color to use!
+                Do Until wrd = -1
+                    wrd = rtb.Find(item, start, RichTextBoxFinds.MatchCase)
+                    If wrd <> -1 Then
+                        rtb.SelectionColor = textColor
+                        start = wrd + 1
+                    End If
+                Loop
+                wrd = 0
+                start = 0
+            Next
+
+        Next
+        For Each item In OliveWords
+
+            textColor = Color.Green ' the color for these words
+            ' find and color words ( MatchCase )
+            For x = 1 To item.Count - 1 ' start at 1! , 0 = the color to use!
+                Do Until wrd = -1
+                    wrd = rtb.Find(item, start, RichTextBoxFinds.MatchCase)
+                    If wrd <> -1 Then
+                        rtb.SelectionColor = textColor
+                        start = wrd + 1
+                    End If
+                Loop
+                wrd = 0
+                start = 0
+            Next
+
+        Next
+
+        For Each item In RedWords
+
+            textColor = Color.Red ' the color for these words
+            ' find and color words ( MatchCase )
+            For x = 1 To item.Count - 1 ' start at 1! , 0 = the color to use!
+                Do Until wrd = -1
+                    wrd = rtb.Find(item, start, RichTextBoxFinds.MatchCase)
+                    If wrd <> -1 Then
+                        rtb.SelectionColor = textColor
+                        start = wrd + 1
+                    End If
+                Loop
+                wrd = 0
+                start = 0
+            Next
+
+        Next
+
+    End Sub
+
 End Class
